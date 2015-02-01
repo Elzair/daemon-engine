@@ -1,7 +1,7 @@
 /*
 ===========================================================================
 Daemon BSD Source Code
-Copyright (c) 2013-2014, Daemon Developers
+Copyright (c) 2013-2015, Daemon Developers
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ===========================================================================
 */
 
-#ifndef COMMON_COMMON_H_
-#define COMMON_COMMON_H_
+#ifndef COMMON_IPC_COMMON_H_
+#define COMMON_IPC_COMMON_H_
 
-// Compiler.h, Platform.h and Endian.h are included by q_shared.h
-#include "../engine/qcommon/q_shared.h"
+namespace IPC {
 
-// Common headers
-#include "String.h"
-#include "Util.h"
-#include "Optional.h"
-#include "Command.h"
-#include "Cvar.h"
-#include "Log.h"
-#include "LineEditData.h"
-#include "Maths.h"
-#include "System.h"
-#include "Serialize.h"
-#include "FileSystem.h"
-#include "DisjointSets.h"
+	// IPC descriptor which can be sent over a socket. You should treat this as an
+	// opaque type and not access any of the fields directly.
+	struct Desc {
+		Sys::OSHandle handle;
+		#ifndef __native_client__
+		int type;
+		union {
+			uint64_t size;
+			int32_t flags;
+		};
+		#endif
+	};
+	void CloseDesc(const Desc& desc);
 
-#endif // COMMON_COMMON_H_
+	// Message ID to indicate an RPC return
+	const uint32_t ID_RETURN = 0xffffffff;
+
+	// Combine a major and minor ID into a single number
+	template<uint16_t Major, uint16_t Minor> struct Id {
+		enum {
+			value = (Major << 16) + Minor
+		};
+	};
+
+	// Asynchronous message which does not wait for a reply
+	template<typename Id, typename... T> struct Message {
+		enum {
+			id = Id::value
+		};
+		typedef std::tuple<T...> Inputs;
+	};
+
+	// Reply class which should only be used for the second parameter of SyncMessage
+	template<typename... T> struct Reply {
+		typedef std::tuple<T...> Outputs;
+	};
+
+	// Synchronous message which waits for a reply. The reply can contain data.
+	template<typename Msg, typename Reply = Reply<>> struct SyncMessage {
+		enum {
+			id = Msg::id
+		};
+		typedef typename Msg::Inputs Inputs;
+		typedef typename Reply::Outputs Outputs;
+	};
+
+} // namespace IPC
+
+#endif // COMMON_IPC_IPC_H_
