@@ -28,24 +28,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ===========================================================================
 */
 
-#ifndef COMMON_COMMON_H_
-#define COMMON_COMMON_H_
+#include "../qcommon/qcommon.h"
 
-// Compiler.h, Platform.h and Endian.h are included by q_shared.h
-#include "../engine/qcommon/q_shared.h"
+#ifndef FRAMEWORK_SYSTEM_H_
+#define FRAMEWORK_SYSTEM_H_
 
-// Common headers
-#include "String.h"
-#include "Util.h"
-#include "Optional.h"
-#include "Command.h"
-#include "Cvar.h"
-#include "Log.h"
-#include "LineEditData.h"
-#include "Maths.h"
-#include "System.h"
-#include "Serialize.h"
-#include "FileSystem.h"
-#include "DisjointSets.h"
+// Low-level system functions
+namespace Sys {
 
-#endif // COMMON_COMMON_H_
+// Cleanly exit the engine, shutting down all subsystems.
+NORETURN void Quit(Str::StringRef message);
+
+} // namespace Sys
+
+#endif // FRAMEWORK_SYSTEM_H_
