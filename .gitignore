@@ -46,3 +46,8 @@ external_deps/*
 #never ignore these in subdirectories by accident
 !.gitattributes
 !.gitignore
+
+#ignore ctags stuff
+GPATH
+GRTAGS
+GTAGS
