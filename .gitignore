@@ -51,3 +51,6 @@ external_deps/*
 GPATH
 GRTAGS
 GTAGS
+
+# Clang stuff
+*.clang_complete
