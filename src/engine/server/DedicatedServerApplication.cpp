@@ -28,52 +28,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ===========================================================================
 */
 
+#include <common/FileSystem.h>
 #include "framework/Application.h"
 #include "framework/CommandSystem.h"
-#include "client.h"
-
-#if defined(_WIN32) || defined(BUILD_CLIENT)
-#include <SDL.h>
-#endif
+#include "qcommon/qcommon.h"
 
 namespace Application {
 
-class ClientApplication : public Application {
+class DedicatedServerApplication : public Application {
     public:
-        ClientApplication() {
-            #if defined(_WIN32) && defined(BUILD_TTY_CLIENT)
+        DedicatedServerApplication() {
+            #ifdef _WIN32
                 // The windows dedicated server and tty client must enable the
                 // curses interface because they have no other usable interface.
                 traits.useCurses = true;
             #endif
-            #ifdef BUILD_CLIENT
-                traits.isClient = true;
-            #endif
-            #ifdef BUILD_TTY_CLIENT
-                traits.isTTYClient = true;
-            #endif
+            traits.isServer = true;
+            traits.uniqueHomepathSuffix = "-server";
         }
 
         void LoadInitialConfig(bool resetConfig) override {
             //TODO(kangz) move this functions and its friends to FileSystem.cpp
 	        FS_LoadBasePak();
-
-            CL_InitKeyCommands(); // for binds
-
-	        Cmd::BufferCommandText("preset default.cfg");
 	        if (!resetConfig) {
-                Cmd::BufferCommandText("exec -f " CONFIG_NAME);
-                Cmd::BufferCommandText("exec -f " KEYBINDINGS_NAME);
-                Cmd::BufferCommandText("exec -f " AUTOEXEC_NAME);
+		        Cmd::BufferCommandText("exec -f " SERVERCONFIG_NAME);
 	        }
         }
 
-        void Initialize(Str::StringRef uri) override {
+        void Initialize(Str::StringRef) override {
             Com_Init((char*) "");
-
-            if (!uri.empty()) {
-                Cmd::BufferCommandTextAfter(std::string("connect ") + Cmd::Escape(uri));
-            }
         }
 
         void Frame() override {
@@ -84,34 +67,16 @@ class ClientApplication : public Application {
             FS::PakPath::ClearPaks();
             FS_LoadBasePak();
             SV_Shutdown(Str::Format("Server crashed: %s\n", reason).c_str());
-            CL_Disconnect(true);
-            CL_FlushMemory();
         }
 
         void Shutdown(bool error, Str::StringRef message) override {
-            #if defined(_WIN32) || defined(BUILD_CLIENT)
-                if (error) {
-                    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, PRODUCT_NAME, message.c_str(), nullptr);
-                }
-            #endif
-
-            TRY_SHUTDOWN(CL_Shutdown());
             TRY_SHUTDOWN(
                 SV_Shutdown(error ? Str::Format("Server fatal crashed: %s\n", message).c_str() : Str::Format("%s\n", message).c_str())
             );
             TRY_SHUTDOWN(Com_Shutdown());
-
-            #if defined(_WIN32) || defined(BUILD_CLIENT)
-                // Always run SDL_Quit, because it restores system resolution and gamma.
-                SDL_Quit();
-            #endif
-        }
-
-        void OnUnhandledCommand(const Cmd::Args& args) override {
-            CL_ForwardCommandToServer(args.EscapedArgs(0).c_str());
         }
 };
 
-INSTANTIATE_APPLICATION(ClientApplication);
+INSTANTIATE_APPLICATION(DedicatedServerApplication);
 
 }

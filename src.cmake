@@ -248,7 +248,7 @@ set(CLIENTBASELIST
     ${ENGINE_DIR}/client/dl_main.cpp
     ${ENGINE_DIR}/client/keycodes.h
     ${ENGINE_DIR}/client/keys.h
-    ${ENGINE_DIR}/client/ClientApplication.cpp
+    ${ENGINE_DIR}/client/ClientServerApplication.cpp
 )
 
 set(CLIENTLIST
@@ -282,7 +282,7 @@ set(TTYCLIENTLIST
 set(DEDSERVERLIST
     ${ENGINE_DIR}/null/null_client.cpp
     ${ENGINE_DIR}/null/null_input.cpp
-    ${ENGINE_DIR}/server/ServerApplication.cpp
+    ${ENGINE_DIR}/server/DedicatedServerApplication.cpp
 )
 
 set(WIN_RC ${ENGINE_DIR}/sys/daemon.rc)
