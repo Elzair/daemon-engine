@@ -105,6 +105,30 @@ include(CMakeParseArguments)
 include(DaemonPlatform)
 
 ################################################################################
+# Defs
+################################################################################
+
+if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/common/Defs.h")
+    find_package(PythonInterp REQUIRED)
+    
+    # Check if python has all the dependencies
+    # TODO: Execute pip directly here and install them
+    execute_process(
+        COMMAND ${PYTHON_EXECUTABLE} -c "import yaml, os, re"
+        RESULT_VARIABLE RET)
+    if (NOT RET EQUAL 0)
+        message(FATAL_ERROR "Missing dependences for Defs generation. Please ensure you have python ≥ 2 and python-yaml installed.
+                             Use pip install -r utils/gendefs/requirements.txt to install")
+    endif (NOT RET EQUAL 0)
+    
+    # Generate Defs.h
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/utils/gendefs/gendefs.py
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/common/Defs.h")
+
+################################################################################
 # Directories
 ################################################################################
 

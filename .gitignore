@@ -58,3 +58,7 @@ GTAGS
 # gendefs stuff
 utils/gendefs/*.yaml
 !utils/gendefs/default.yaml
+src/common/Defs.h
+
+# Add blank revision.h to src/ to silence irony-mode errors
+src/revision.h
