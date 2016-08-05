@@ -56,5 +56,5 @@ GTAGS
 *.clang_complete
 
 # gendefs stuff
-src/utils/gendefs/*.yaml
-!src/utils/gendefs/default.yaml
+utils/gendefs/*.yaml
+!utils/gendefs/default.yaml

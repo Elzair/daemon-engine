@@ -1,0 +1,23 @@
+PRODUCT_NAME: "Unvanquished"
+
+PRODUCT_VERSION: "0.50"
+
+GAMENAME_STRING: "unv"
+
+MASTER_SERVER_NAME: "master.unvanquished.net"
+
+IRC_SERVER:          "irc.freenode.org"
+IRC_CHANNEL:         "unv-lobby"
+
+WWW_BASEURL:         "dl.unvanquished.net/pkg"
+
+AUTOEXEC_NAME:       "autoexec.cfg"
+
+CONFIG_NAME:         "autogen.cfg"
+KEYBINDINGS_NAME:    "keybindings.cfg"
+TEAMCONFIG_NAME:     "teamconfig.cfg"
+SERVERCONFIG_NAME:   "autogen_server.cfg"
+
+UNNAMED_PLAYER:      "UnnamedPlayer"
+
+RSAKEY_FILE: "pubkey"
